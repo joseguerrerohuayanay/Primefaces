@@ -1,0 +1,103 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Registro de Cliente</title>
+        <f:event type="preRenderView" listener="#{clienteController.listar()}"/>
+        <p:growl id="message" showDetail="true"/>
+        <p:messages id="msgs"/>
+    </h:head>
+
+    <h:body>
+
+        <h:form id="newcliente">
+            <p:panel>
+                <h2>Nuevo Cliente</h2>
+                <h:panelGrid columns="2" cellpadding="7">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{clienteController.cliente.nombre}" required="true"/>
+                    <p:outputLabel value="Apellido"/>
+                    <p:inputText value="#{clienteController.cliente.apellido}" required="true"/>
+                    <p:outputLabel value="DNI"/>
+                    <p:inputText value="#{clienteController.cliente.dni}" maxlength="8" required="true"/>
+                    <p:commandButton value="Registrar" styleClass="p-mt-3" update="newcliente :datacliente :message"
+                                     actionListener="#{clienteController.registrar()}"/>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+
+
+        <h:form id="datacliente">
+            <p:dataTable id="cliente" value="#{clienteController.listarcliente}" selection="#{clienteController.cliente}"
+                         var="data">
+
+                <f:facet name="header">
+                    <center>
+                        Clientes
+                    </center>
+                </f:facet>
+
+                <p:column headerText="ID">
+                    <h:outputText value="#{data.id}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{data.nombre}"/>
+                </p:column>
+                <p:column headerText="Apellido">
+                    <h:outputText value="#{data.apellido}"/>
+                </p:column>
+                <p:column headerText="Dni">
+                    <h:outputText value="#{data.dni}"/>
+                </p:column>
+                <p:column headerText="Modificar">
+                    <p:commandButton value="Modificar" styleClass="p-mt-3" update=":frmModificar"
+                                     oncomplete="PF('wdlgDatos').show();">
+                        <f:setPropertyActionListener value="#{data}" target="#{clienteController.cliente}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column headerText="Eliminar">
+                    <p:commandButton value="Eliminar" styleClass="p-mt-3" update="cliente :message"
+                                     actionListener="#{clienteController.eliminar(data)}">
+                        <p:confirm type="popup" header="Confirmacion" message="Estas seguro de eliminar este cliente?"
+                                   icon="pi pi-exclamation-triangle"  />
+
+                        <p:confirmPopup global="true">
+                            <p:commandButton value="No" type="button" styleClass="ui-confirm-popup-no ui-button-flat"/>
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirm-popup-yes" />
+                        </p:confirmPopup>
+
+                    </p:commandButton>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <p:dialog header="Datos del Clientes" widgetVar="wdlgDatos">
+            <h:form id="frmModificar">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{clienteController.cliente.nombre}" required="true"/>
+                    <p:outputLabel value="Apellido"/>
+                    <p:inputText value="#{clienteController.cliente.apellido}" required="true"/>
+                    <p:outputLabel value="DNI"/>
+                    <p:inputText value="#{clienteController.cliente.dni}" maxlength="8" required="true"/>
+                    <p:commandButton value="Registrar" styleClass="p-mt-3" update="frmModificar :datacliente:cliente :message"
+                                     actionListener="#{clienteController.editar()}"
+                                     oncomplete="if(!args.validationFailed)PF('wdlgDatos').hide();">
+                        <p:confirm header="Confirmacion" message="Estas seguro de modificar los datos de este cliente?"
+                                   icon="pi pi-exclamation-triangle"/>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes"/>
+                        </p:confirmDialog>
+                    </p:commandButton>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

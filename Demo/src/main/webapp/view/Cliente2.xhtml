@@ -1,0 +1,105 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Registro de Cliente</title>
+        <f:event type="preRenderView" listener="#{clienteController.listar()}"/>
+        <p:growl id="message" showDetail="true"/>
+        <p:messages id="msgs"/>
+    </h:head>
+
+    <h:body>
+
+        <h:form id="newcliente">
+            <p:panel>
+                <h2>Nuevo Cliente</h2>
+                <h:panelGrid columns="2" cellpadding="7">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{clienteController.cliente.nombre}"/>
+                    <p:outputLabel value="Apellido"/>
+                    <p:inputText value="#{clienteController.cliente.apellido}"/>
+                    <p:outputLabel value="DNI"/>
+                    <p:inputText value="#{clienteController.cliente.dni}"/>
+                    <p:commandButton id="registrar" value="Registrar" styleClass="p-mt-3" update="newcliente :datacliente" actionListener="#{clienteController.registrar()}" />
+                    <p:commandButton  id="vistacliente" value="Find" type="button" icon="pi pi-search"/>
+                    <p:commandButton  id="btnprueba" type="button" value="prueba" />
+                    <p:overlayPanel for="btnprueba" style="width:350px">
+                        <p>Este boton es de prueba</p>
+                    </p:overlayPanel>
+                    <p:commandButton value="Show" type="button" icon="pi pi-external-link" onclick="PF('dlg4').show()"/>
+                    <p:dialog header="Header" widgetVar="dlg4" minHeight="40" width="350" showEffect="fade" minimizable="true" maximizable="true">
+                        <p class="p-m-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </p:dialog>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+
+
+
+        <p:overlayPanel for=":newcliente:vistacliente" dynamic="true" style="width:1200px" widgetVar="moviePicker">
+            <h:form id="datacliente">
+                <p:dataTable id="cliente" value="#{clienteController.listarcliente}" selection="#{clienteController.cliente}" var="data" >
+
+                    <f:facet name= "header">
+                        <center>
+                            Clientes
+                        </center>
+                    </f:facet> 
+
+                    <p:ajax event="rowSelect" listener="#{clienteController.listarcliente}" oncomplete="PF('moviePicker').hide()"/>
+
+                    <p:column headerText="ID" >
+                        <h:outputText value="#{data.id}" />
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{data.nombre}" />
+                    </p:column>
+                    <p:column headerText="Apellido">
+                        <h:outputText value="#{data.apellido}" />
+                    </p:column>
+                    <p:column headerText="Dni">
+                        <h:outputText value="#{data.dni}" />
+                    </p:column>
+                    <p:column headerText="Modificar">
+                        <p:commandButton value="Modificar" styleClass="p-mt-3" update=":frmModificar" oncomplete="PF('wdlgDatos').show();">
+                            <f:setPropertyActionListener value="#{data}" target="#{clienteController.cliente}" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Eliminar">
+                        <p:commandButton value="Eliminar" styleClass="p-mt-3" update="cliente" actionListener="#{clienteController.eliminar(data)}" >
+                            <p:confirm header="Confirmacion" message="Estas seguro de eliminar este cliente?" icon="pi pi-exclamation-triangle"/>
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350" >
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" />
+                            </p:confirmDialog>
+
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:form>
+        </p:overlayPanel>
+
+        <p:dialog header="Datos del Clientes" widgetVar="wdlgDatos">
+            <h:form id="frmModificar">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{clienteController.cliente.nombre}"/>
+                    <p:outputLabel value="Apellido"/>
+                    <p:inputText value="#{clienteController.cliente.apellido}"/>
+                    <p:outputLabel value="DNI"/>
+                    <p:inputText value="#{clienteController.cliente.dni}"/>
+                    <p:commandButton value="Registrar" styleClass="p-mt-3" update="frmModificar :datacliente:cliente" actionListener="#{clienteController.editar()}"  oncomplete="if(!args.validationFailed)PF('wdlgDatos').hide();"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>

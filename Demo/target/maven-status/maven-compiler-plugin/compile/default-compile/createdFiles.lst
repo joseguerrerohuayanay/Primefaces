@@ -1,0 +1,5 @@
+controller\ClienteController.class
+dao\Conexion.class
+dao\ICRUD.class
+model\ClienteModel.class
+dao\ClienteDAO.class
